@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters import Text
 
 from ..keyboards.inline import main_menu
 from ..keyboards.inline import user_info
+from ..keyboards.inline import task_manager_menu
 
 
 async def user_start(message: Message):
@@ -24,6 +25,25 @@ async def get_user_info(callback: CallbackQuery):
                                          reply_markup=user_info())
 
 
+async def task_manager(callback: CallbackQuery):
+    current_func = callback.data.split(':')[1]
+    if current_func == 'task_manager_menu':
+        await callback.message.edit_text("task_manager_menu", reply_markup=task_manager_menu())
+    if current_func == 'all_task':
+        await callback.message.edit_text(f"In Progress 1",
+                                         parse_mode="html",
+                                         reply_markup=task_manager_menu())
+    if current_func == 'current_task':
+        await callback.message.edit_text(f"In Progress 2",
+                                         parse_mode="html",
+                                         reply_markup=task_manager_menu())
+
+    if current_func == 'add_task':
+        await callback.message.edit_text(f"In Progress 3",
+                                         parse_mode="html",
+                                         reply_markup=task_manager_menu())
+
+
 async def get_back(callback: CallbackQuery):
     current_func = callback.data.split(':')[1]
     if current_func == 'main_menu':
@@ -32,5 +52,8 @@ async def get_back(callback: CallbackQuery):
 
 def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, commands=["start"], state="*")
+
     dp.register_callback_query_handler(get_user_info, Text(startswith='user_info:'))
+    dp.register_callback_query_handler(task_manager, Text(startswith='task_manager:'))
+
     dp.register_callback_query_handler(get_back, Text(startswith='back:'))
